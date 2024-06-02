@@ -5,8 +5,8 @@ data "aws_vpc" "default" {
 }
 
 # security group to open all the inbound ports
-resource "aws_security_group" "allow_all" {
-  name        = "allow_all_for_docker"
+resource "aws_security_group" "allows_all" {
+  name        = "allows_all_for_docker"
   description = "Allow all inbound traffic"
   vpc_id      = data.aws_vpc.default.id
 
@@ -43,8 +43,8 @@ data "aws_ami" "ubuntu" {
 }
 
 # create a key from the key pair
-resource "aws_key_pair" "docker-key" {
-  key_name   = "docker-key"
+resource "aws_key_pair" "testkeypair" {
+  key_name   = "testkeypair"
   public_key = file("~/.ssh/id_rsa.pub")
 }
 
@@ -52,7 +52,7 @@ resource "aws_key_pair" "docker-key" {
 resource "aws_instance" "docker" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
-  key_name                    = aws_key_pair.docker-key.key_name
+  key_name                    = aws_key_pair.testkeypair.key_name
   vpc_security_group_ids      = [aws_security_group.allow_all.id]
   user_data                   = file("installdocker.sh")
   associate_public_ip_address = true
